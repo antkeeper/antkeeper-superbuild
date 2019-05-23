@@ -1,0 +1,12 @@
+[submodule "modules/entt"]
+	path = modules/entt
+	url = git@cjhoward.org:entt.git
+[submodule "modules/vmq"]
+	path = modules/vmq
+	url = git@cjhoward.org:vmq.git
+[submodule "modules/antkeeper-source"]
+	path = modules/antkeeper-source
+	url = git@cjhoward.org:antkeeper-source.git
+[submodule "modules/antkeeper-data"]
+	path = modules/antkeeper-data
+	url = git@cjhoward.org:antkeeper-data.git

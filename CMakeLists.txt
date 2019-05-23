@@ -1,0 +1,142 @@
+# Prevent in-source builds
+if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+	message(FATAL_ERROR "In-source builds prohibited. Call cmake from the build directory.")
+endif()
+
+cmake_minimum_required(VERSION 3.7)
+
+# Get software package name and version
+include(${CMAKE_SOURCE_DIR}/modules/antkeeper-source/cmake/project.cmake)
+
+# Setup package variables
+set(PACKAGE_NAME ${PROJECT_NAME})
+set(PACKAGE_VERSION ${PROJECT_VERSION})
+set(PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+get_filename_component(PACKAGE_PLATFORM ${CMAKE_BINARY_DIR} NAME CACHE)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+	set(PACKAGE_BUILD_TYPE debug)
+else()
+	set(PACKAGE_BUILD_TYPE release)
+endif()
+set(PACKAGE_FILENAME ${PACKAGE_NAME}-${PACKAGE_VERSION}-${PACKAGE_PLATFORM})
+set(PACKAGE_INSTALL_DIR ${CMAKE_SOURCE_DIR}/bin/${PACKAGE_BUILD_TYPE}/${PACKAGE_FILENAME})
+set(PACKAGE_DIST_DIR ${CMAKE_SOURCE_DIR}/dist/${PACKAGE_BUILD_TYPE})
+
+# Check for architecture mismatches
+if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "4")
+	if (PACKAGE_PLATFORM MATCHES "64$")
+		message(FATAL_ERROR "Compiler architecture is 32-bit but target architecture is 64-bit.")
+	endif()
+else()
+	if (PACKAGE_PLATFORM MATCHES "32$")
+		message(FATAL_ERROR "Compiler architecture is 64-bit but target architecture is 32-bit.")
+	endif()
+endif()
+
+# Create superbuild project
+project(${PACKAGE_NAME}-superbuild VERSION ${PACKAGE_VERSION})
+
+# Options
+set(INKSCAPE_PATH "inkscape" CACHE PATH "Path to the Inkscape binary")
+set(BLENDER_PATH "blender" CACHE PATH "Path to the Blender binary")
+
+# Setup module directories
+set(MODULE_SOURCE_DIR "${PROJECT_SOURCE_DIR}/modules")
+set(MODULE_BUILD_DIR "${PROJECT_BINARY_DIR}/modules/build")
+set(MODULE_INSTALL_DIR "${CMAKE_BINARY_DIR}/modules/install")
+
+# Include ExternalProject_Add macro
+include(${CMAKE_ROOT}/Modules/ExternalProject.cmake)
+
+# Build vmq module
+ExternalProject_Add(vmq
+	SOURCE_DIR ${MODULE_SOURCE_DIR}/vmq
+	BINARY_DIR ${MODULE_BUILD_DIR}/vmq
+	INSTALL_DIR ${MODULE_INSTALL_DIR}
+	CMAKE_ARGS
+		"-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+		"-DCMAKE_INSTALL_PREFIX=${MODULE_INSTALL_DIR}"
+		"-DBUILD_EXAMPLES=OFF"
+	BUILD_ALWAYS 1)
+
+# Build antkeeper-source module
+ExternalProject_Add(antkeeper-source
+	DEPENDS vmq
+	SOURCE_DIR ${MODULE_SOURCE_DIR}/antkeeper-source
+	BINARY_DIR ${MODULE_BUILD_DIR}/antkeeper-source
+	INSTALL_DIR ${PACKAGE_INSTALL_DIR}
+	CMAKE_ARGS
+		"-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+		"-DCMAKE_INSTALL_PREFIX=${PACKAGE_INSTALL_DIR}"
+		"-DPACKAGE_PLATFORM=${PACKAGE_PLATFORM}"
+		"-DCMAKE_PREFIX_PATH=${MODULE_INSTALL_DIR}"
+	BUILD_ALWAYS 1)
+
+# Create install target
+install(DIRECTORY "${PACKAGE_INSTALL_DIR}/" DESTINATION . COMPONENT "package" USE_SOURCE_PERMISSIONS FILES_MATCHING PATTERN "*")
+
+# Create clean-build target
+add_custom_target(clean-build
+	COMMAND git clean -fdX
+	WORKING_DIRECTORY "${PROJECT_BINARY_DIR}")
+
+# Create cpack target
+add_custom_target(cpack
+    COMMAND "${CMAKE_COMMAND}" --build . --target package
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+    DEPENDS antkeeper-source
+    VERBATIM)
+
+# Create dist target
+add_custom_target(dist DEPENDS cpack)
+
+# Configure CPack variables
+set(CPACK_PACKAGE_NAME "${PACKAGE_NAME}")
+set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
+set(CPACK_PACKAGE_FILE_NAME "${PACKAGE_NAME}-${PACKAGE_VERSION}-${PACKAGE_PLATFORM}")
+set(CPACK_PACKAGE_DESCRIPTION "")
+set(CPACK_PACKAGE_CONTACT "Christopher J. Howard <cjhoward@cjhoward.org>")
+set(CPACK_COMPONENTS_ALL "package")
+
+# Configure .tgz and .zip distribution packages
+set(CPACK_ARCHIVE_COMPONENT_INSTALL ON)
+#set(CPACK_ARCHIVE_FILE_NAME "${CPACK_PACKAGE_FILE_NAME}.zip")
+#set(CPACK_ARCHIVE_PACKAGE_FILE_NAME "${CPACK_PACKAGE_FILE_NAME}.zip")
+
+# Configure .deb distribution package
+set(CPACK_DEB_COMPONENT_INSTALL ON)
+set(CPACK_DEBIAN_PACKAGE_PACKAGE_NAME "${CPACK_PACKAGE_NAME}")
+set(CPACK_DEBIAN_PACKAGE_FILE_NAME "${CPACK_PACKAGE_FILE_NAME}.deb")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "")
+
+# Configure NSIS installer package
+#set(CPACK_NSIS_MUI_ICON "${PROJECT_SOURCE_DIR}/data/icons/app-icon.ico")
+#set(CPACK_PACKAGE_INSTALL_DIRECTORY "App")
+
+# Build distribution packages according to target platform
+set(CPACK_GENERATOR "")
+if(PACKAGE_PLATFORM MATCHES "linux")
+	set(CPACK_GENERATOR "TGZ;DEB")
+	add_custom_command(TARGET dist
+		COMMAND ${CMAKE_COMMAND} -E make_directory ${PACKAGE_DIST_DIR}
+		COMMAND ${CMAKE_COMMAND} -E copy "${CPACK_PACKAGE_FILE_NAME}-package.tar.gz" "${PACKAGE_DIST_DIR}/${PACKAGE_FILENAME}.tar.gz"
+		COMMAND ${CMAKE_COMMAND} -E copy "${CPACK_DEBIAN_PACKAGE_FILE_NAME}" "${PACKAGE_DIST_DIR}")
+
+elseif(PACKAGE_PLATFORM MATCHES "win")
+	set(CPACK_GENERATOR "ZIP;NSIS")
+	add_custom_command(TARGET dist
+		COMMAND ${CMAKE_COMMAND} -E make_directory ${PACKAGE_DIST_DIR}
+		COMMAND ${CMAKE_COMMAND} -E copy "${CPACK_PACKAGE_FILE_NAME}-package.zip" "${PACKAGE_DIST_DIR}/${PACKAGE_FILENAME}.zip")
+elseif(PACKAGE_PLATFORM MATCHES "osx")
+	set(CPACK_GENERATOR "ZIP;NSIS")
+	add_custom_command(TARGET dist
+		COMMAND ${CMAKE_COMMAND} -E make_directory ${PACKAGE_DIST_DIR}
+		COMMAND ${CMAKE_COMMAND} -E copy "${CPACK_PACKAGE_FILE_NAME}-package.zip" "${PACKAGE_DIST_DIR}/${PACKAGE_FILENAME}.zip")
+endif()
+
+# Include CPack macro
+include(CPack)
