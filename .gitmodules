@@ -16,3 +16,6 @@
 [submodule "modules/glfw"]
 	path = modules/glfw
 	url = git@cjhoward.org:glfw.git
+[submodule "modules/openal-soft"]
+	path = modules/openal-soft
+	url = git@cjhoward.org:openal-soft.git
