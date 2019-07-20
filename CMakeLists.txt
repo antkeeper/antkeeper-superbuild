@@ -39,8 +39,8 @@ endif()
 project(${PACKAGE_NAME}-superbuild VERSION ${PACKAGE_VERSION})
 
 # Options
-set(INKSCAPE_PATH "inkscape" CACHE PATH "Path to the Inkscape binary")
-set(BLENDER_PATH "blender" CACHE PATH "Path to the Blender binary")
+set(BLENDER "blender" CACHE FILEPATH "Path to Blender executable")
+set(INKSCAPE "inkscape" CACHE FILEPATH "Path to Inkscape executable")
 
 # Setup module directories
 set(MODULE_SOURCE_DIR "${PROJECT_SOURCE_DIR}/modules")
@@ -139,6 +139,8 @@ ExternalProject_Add(antkeeper-data
 		"-DCMAKE_INSTALL_PREFIX=${PACKAGE_INSTALL_DIR}"
 		"-DPACKAGE_PLATFORM=${PACKAGE_PLATFORM}"
 		"-DCMAKE_PREFIX_PATH=${MODULE_INSTALL_DIR}"
+		"-DBLENDER=${BLENDER}"
+		"-DINKSCAPE=${INKSCAPE}"
 	BUILD_ALWAYS 1)
 
 # Create install target
