@@ -8,14 +8,18 @@ Download the `antkeeper-superbuild` repository and all of its Git submodules:
 
 	git clone --recursive https://github.com/antkeeper/antkeeper-superbuild.git
 
+> Note: The `antkeeper-data` submodule contains proprietary game data and is not publicly available. The game can be built without this submodule, but game data is required to play Antkeeper. You can get a copy of the game data by purchasing Antkeeper at [antkeeper.com](https://antkeeper.com/).
+
 ## Configuration & Building
 
-CMake is required to configure and build the application. Depending on the target build platform, CMake should be invoked from one of the following directories:
+CMake is required to configure and build the application. Depending on the target platform, CMake should be invoked from one of the following directories:
 
-	build/linux32 // 32-bit GNU/Linux application
-	build/linux64 // 64-bit GNU/Linux application
-	build/win32   // 32-bit Windows application
-	build/win64   // 64-bit Windows application
+| Directory                        | Platform         |
+| :------------------------------- | :--------------- |
+| [build/linux32](./build/linux32) | 32-bit GNU/Linux |
+| [build/linux64](./build/linux64) | 64-bit GNU/Linux |
+| [build/win32](./build/win32)     | 32-bit Windows   |
+| [build/win64](./build/win64)     | 64-bit Windows   |
 
 The following arguments may be passed to CMake during configuration:
 
@@ -23,25 +27,21 @@ The following arguments may be passed to CMake during configuration:
 
 ### GNU/Linux
 
-Building on GNU/Linux requires CMake, GCC, G++, and GNU Make. Open a terminal in the project root directory and run the following commands:
+Building for GNU/Linux requires CMake, GCC, G++, and GNU Make. Open a terminal in either the `build/linux32` or `build/linux64` directory and run the following commands:
 
-	cd build/linux64
 	cmake ../.. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=...
 	cmake --build .
 
 ### Windows
 
-Building on Windows requires CMake and Visual Studio Build Tools. Additionally, [NSIS](http://nsis.sourceforge.net/) is required if you want to build a distributable installer program. In order to correctly build for your target architecture, you must use the `x86 Native Tools Command Prompt` or the `x64 Native Tools Command Prompt` for 32-bit and 64-bit applications, respectively. Then navigate to the project root directory and run the following commands:
+Building for Windows requires CMake and Visual Studio Build Tools. Additionally, [NSIS](http://nsis.sourceforge.net/) is required if you want to build a distributable installer program. In order to correctly build for your target architecture, you must use the `x86 Native Tools Command Prompt` or the `x64 Native Tools Command Prompt` for 32-bit and 64-bit applications, respectively. Then navigate to either the `build\win32` or `build\win64` directory and run the following commands:
 
-	cd build\win64
 	cmake ..\.. -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=...
 	cmake --build .
 
-## Testing
+## Running
 
-After building, a standalone version of the application will be located somewhere in the `bin` directory according to the build type, build platform, and version string. This application can be executed with the following command:
-
-	cmake --build . --target run
+After building, a standalone version of the application will be located somewhere in the `bin` directory according to the build type, build platform, and version string.
 
 ## Distribution
 
