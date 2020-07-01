@@ -8,6 +8,7 @@ cmake_minimum_required(VERSION 3.7)
 # Get software package name and version
 include(${CMAKE_SOURCE_DIR}/modules/antkeeper-source/cmake/project.cmake)
 
+
 # Setup package variables
 set(PACKAGE_NAME ${PROJECT_NAME})
 set(PACKAGE_VERSION ${PROJECT_VERSION})
@@ -83,7 +84,7 @@ ExternalProject_Add(vmq
 		"-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
 		"-DCMAKE_INSTALL_PREFIX=${MODULE_INSTALL_DIR}"
 		"-DBUILD_EXAMPLES=OFF"
-	BUILD_ALWAYS 1)
+	BUILD_ALWAYS 0)
 
 # Build EnTT module
 ExternalProject_Add(entt
