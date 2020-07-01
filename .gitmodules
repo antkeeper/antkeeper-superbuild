@@ -1,18 +1,6 @@
-[submodule "modules/entt"]
-	path = modules/entt
-	url = git@cjhoward.org:entt.git
-[submodule "modules/vmq"]
-	path = modules/vmq
-	url = git@cjhoward.org:vmq.git
 [submodule "modules/antkeeper-source"]
 	path = modules/antkeeper-source
-	url = git@cjhoward.org:antkeeper-source.git
+	url = https://github.com/antkeeper/antkeeper-source.git
 [submodule "modules/antkeeper-data"]
 	path = modules/antkeeper-data
-	url = git@cjhoward.org:antkeeper-data.git
-[submodule "modules/SDL2"]
-	path = modules/SDL2
-	url = git@cjhoward.org:SDL2.git
-[submodule "modules/openal-soft"]
-	path = modules/openal-soft
-	url = git@cjhoward.org:openal-soft.git
+	url = https://github.com/antkeeper/antkeeper-data.gits

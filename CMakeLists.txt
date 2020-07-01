@@ -8,7 +8,6 @@ cmake_minimum_required(VERSION 3.7)
 # Get software package name and version
 include(${CMAKE_SOURCE_DIR}/modules/antkeeper-source/cmake/project.cmake)
 
-
 # Setup package variables
 set(PACKAGE_NAME ${PROJECT_NAME})
 set(PACKAGE_VERSION ${PROJECT_VERSION})
@@ -96,9 +95,49 @@ ExternalProject_Add(entt
 		"-DCMAKE_INSTALL_PREFIX=${MODULE_INSTALL_DIR}"
 	BUILD_ALWAYS 0)
 
+# Build nlohmann-json module
+ExternalProject_Add(nlohmann-json
+	SOURCE_DIR ${MODULE_SOURCE_DIR}/nlohmann
+	BINARY_DIR ${MODULE_BUILD_DIR}/nlohmann
+	INSTALL_DIR ${MODULE_INSTALL_DIR}
+	CMAKE_ARGS
+		"-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+		"-DCMAKE_INSTALL_PREFIX=${MODULE_INSTALL_DIR}"
+	BUILD_ALWAYS 0)
+
+# Build dr_wav module
+ExternalProject_Add(dr_wav
+	SOURCE_DIR ${MODULE_SOURCE_DIR}/dr_wav
+	BINARY_DIR ${MODULE_BUILD_DIR}/dr_wav
+	INSTALL_DIR ${MODULE_INSTALL_DIR}
+	CMAKE_ARGS
+		"-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+		"-DCMAKE_INSTALL_PREFIX=${MODULE_INSTALL_DIR}"
+	BUILD_ALWAYS 0)
+
+# Build stb module
+ExternalProject_Add(stb
+	SOURCE_DIR ${MODULE_SOURCE_DIR}/stb
+	BINARY_DIR ${MODULE_BUILD_DIR}/stb
+	INSTALL_DIR ${MODULE_INSTALL_DIR}
+	CMAKE_ARGS
+		"-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+		"-DCMAKE_INSTALL_PREFIX=${MODULE_INSTALL_DIR}"
+	BUILD_ALWAYS 0)
+
+# Build glad module
+ExternalProject_Add(glad
+	SOURCE_DIR ${MODULE_SOURCE_DIR}/glad
+	BINARY_DIR ${MODULE_BUILD_DIR}/glad
+	INSTALL_DIR ${MODULE_INSTALL_DIR}
+	CMAKE_ARGS
+		"-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+		"-DCMAKE_INSTALL_PREFIX=${MODULE_INSTALL_DIR}"
+	BUILD_ALWAYS 0)
+
 # Build antkeeper-source module
 ExternalProject_Add(antkeeper-source
-	DEPENDS openal-soft vmq entt
+	DEPENDS SDL2 openal-soft vmq entt nlohmann-json dr_wav stb glad
 	SOURCE_DIR ${MODULE_SOURCE_DIR}/antkeeper-source
 	BINARY_DIR ${MODULE_BUILD_DIR}/antkeeper-source
 	INSTALL_DIR ${PACKAGE_INSTALL_DIR}
