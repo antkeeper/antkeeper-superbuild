@@ -27,7 +27,7 @@ The following arguments may be passed to CMake during configuration:
 
 ### GNU/Linux
 
-Building for GNU/Linux requires CMake, GCC, G++, and GNU Make. Open a terminal in either the `build/linux32` or `build/linux64` directory and run the following commands:
+Building for GNU/Linux requires CMake, GCC, G++, and GNU Make. Navigate to either the `build/linux32` or `build/linux64` directory and run the following commands:
 
 	cmake ../.. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=...
 	cmake --build .
