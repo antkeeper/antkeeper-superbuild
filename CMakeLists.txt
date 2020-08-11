@@ -97,17 +97,6 @@ ExternalProject_Add(openal-soft
 		"-DALSOFT_TESTS=OFF"
 	BUILD_ALWAYS 0)
 
-# Build VMQ module
-ExternalProject_Add(vmq
-	SOURCE_DIR ${MODULE_SOURCE_DIR}/vmq
-	BINARY_DIR ${MODULE_BUILD_DIR}/vmq
-	INSTALL_DIR ${MODULE_INSTALL_DIR}
-	CMAKE_ARGS
-		"-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
-		"-DCMAKE_INSTALL_PREFIX=${MODULE_INSTALL_DIR}"
-		"-DBUILD_EXAMPLES=OFF"
-	BUILD_ALWAYS 0)
-
 # Build EnTT module
 ExternalProject_Add(entt
 	SOURCE_DIR ${MODULE_SOURCE_DIR}/entt
@@ -218,7 +207,7 @@ ExternalProject_Add(physfs
 
 # Build antkeeper-source module
 ExternalProject_Add(antkeeper-source
-	DEPENDS SDL2 openal-soft vmq entt nlohmann-json dr_wav stb glad physfs dirent
+	DEPENDS SDL2 openal-soft entt nlohmann-json dr_wav stb glad physfs dirent
 	SOURCE_DIR ${MODULE_SOURCE_DIR}/antkeeper-source
 	BINARY_DIR ${MODULE_BUILD_DIR}/antkeeper-source
 	INSTALL_DIR ${PACKAGE_INSTALL_DIR}
