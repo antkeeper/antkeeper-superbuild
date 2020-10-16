@@ -223,7 +223,7 @@ ExternalProject_Add(antkeeper-source
 	BUILD_ALWAYS 1)
 
 # Build antkeeper-data module (if exists)
-if(IS_DIRECTORY ${MODULE_SOURCE_DIR}/antkeeper-data)
+if(EXISTS ${MODULE_SOURCE_DIR}/antkeeper-data/CMakeLists.txt)
 	ExternalProject_Add(antkeeper-data
 		DEPENDS antkeeper-source
 		SOURCE_DIR ${MODULE_SOURCE_DIR}/antkeeper-data
