@@ -1,6 +1,6 @@
 [submodule "modules/antkeeper-source"]
 	path = modules/antkeeper-source
-	url = https://antkeeper.com/git/antkeeper/source.git
+	url = https://git.antkeeper.com/antkeeper/source.git
 [submodule "modules/antkeeper-data"]
 	path = modules/antkeeper-data
-	url = https://antkeeper.com/git/antkeeper/data.git
+	url = https://git.antkeeper.com/antkeeper/data.git
